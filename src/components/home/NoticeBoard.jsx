@@ -20,7 +20,7 @@ const NoticeBoard = () => {
       console.log('error',error);
     }
   }
-  const SortedNotices = Notices.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  const SortedNotices = Notices.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
   console.log('sort',SortedNotices);
   
   useEffect(()=>{
