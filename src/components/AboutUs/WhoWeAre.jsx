@@ -2,7 +2,7 @@ import { GraduationCap, School } from "lucide-react";
 
 const WhoWeAre = () => {
   return (
-    <div className="relative overflow-hidden px-4 py-16 sm:px-6 lg:px-8">
+    <div className="relative overflow-hidden px-4 py-16 sm:px-6 lg:px-8 mt-[60px]">
       {/* Decorative circles */}
       <div className="absolute -left-20 top-24 z-10 h-28 w-28 rounded-full bg-yellow-200/60" />
       <div className="absolute -left-[87px] top-[79px] h-36 w-36 scale-125 rounded-full bg-red-200/60" />

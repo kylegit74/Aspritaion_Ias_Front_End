@@ -2,7 +2,7 @@ import { Mail, Phone, MapPin, Send } from 'lucide-react';
 {/* Responsive done*/}
 function Form() {
   return (
-    <div className="relative overflow-hidden bg-gradient-to-br from-white to-yellow-50/30 px-4 py-16 sm:px-6 lg:px-8">
+    <div className="relative overflow-hidden mt-[50px] bg-gradient-to-br from-white to-yellow-50/30 px-4 py-16 sm:px-6 lg:px-8">
       <div className="relative z-20 mx-auto max-w-7xl">
         {/* Heading */}
         <div className="text-center">
