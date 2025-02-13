@@ -30,7 +30,7 @@ const HeroSection = () => {
   })
   return (
   <>
-   <div className="hero-section">
+   <div className="hero-section mt-[100px]">
       <Swiper
         modules={[Navigation, Pagination, Autoplay]}
         spaceBetween={50}
