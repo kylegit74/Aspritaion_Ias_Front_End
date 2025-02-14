@@ -41,7 +41,7 @@ const HeroSection = () => {
       >
         {Banners?.map((banner, index) => (
           <SwiperSlide key={index}>
-            <Link to={'/'}>
+            <Link to={banner?.link}>
                 <img className='w-full max-h-[70vh]' src={banner.image} alt={`Slide ${index + 1}`} />
             </Link>
           </SwiperSlide>

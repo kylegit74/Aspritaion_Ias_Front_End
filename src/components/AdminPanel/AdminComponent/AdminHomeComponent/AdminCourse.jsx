@@ -3,6 +3,7 @@ import { Plus, Trash2, GraduationCap, Image as ImageIcon, ChevronDown, ChevronUp
 import FetchAllCourses from "../../../../Services/Course/FetchAllCourse";
 import DeleteCourse from "../../../../Services/Course/DeleteCourse";
 import AddCourse from "../../../../Services/Course/AddCourse";
+import UpdateCourse from "../../../../Services/Course/UpdateCourse";
 
 function AdminCourse() {
   const [Courses, SetCourses] = useState([]);
@@ -10,6 +11,7 @@ function AdminCourse() {
   const [expandedCourse, setExpandedCourse] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [editingCourse, setEditingCourse] = useState(null);
   const [newCourse, setNewCourse] = useState({
     heading: '',
     description: '',
@@ -17,10 +19,6 @@ function AdminCourse() {
     Explore_Courses: ['']
   });
   const [isSaving, setIsSaving] = useState(false);
-  const[Heading, SetHeading]=useState();
-  const[Description, setDescription]=useState();
-  const[file, setFile]=useState();
-  const[Explore_Courses, setExplore_Courses]=useState([])
 
   async function FetchCourses() {
     try {
@@ -56,12 +54,16 @@ function AdminCourse() {
     setIsDragging(false);
   };
 
-  const handleDrop = (e) => {
+  const handleDrop = (e, courseId = null) => {
     e.preventDefault();
     setIsDragging(false);
     const file = e.dataTransfer.files[0];
     if (file && file.type.startsWith('image/')) {
-      setNewCourse(prev => ({ ...prev, image: file }));
+      if (courseId) {
+        handleEditImageChange(file, courseId);
+      } else {
+        setNewCourse(prev => ({ ...prev, image: file }));
+      }
     }
   };
 
@@ -69,6 +71,17 @@ function AdminCourse() {
     const file = e.target.files[0];
     if (file) {
       setNewCourse(prev => ({ ...prev, image: file }));
+    }
+  };
+
+  const handleEditImageChange = async (file, courseId) => {
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+      await UpdateCourse(courseId, formData);
+      FetchCourses();
+    } catch (error) {
+      console.error('Error updating course image:', error);
     }
   };
 
@@ -93,6 +106,61 @@ function AdminCourse() {
       ...prev,
       Explore_Courses: prev.Explore_Courses.filter((_, i) => i !== index)
     }));
+  };
+
+  const handleEditCourse = (course) => {
+    setEditingCourse({
+      ...course,
+      Explore_Courses: [...course.Explore_Courses]
+    });
+    setExpandedCourse(Courses.findIndex(c => c._id === course._id));
+  };
+
+  const handleEditTopicChange = (index, value) => {
+    setEditingCourse(prev => ({
+      ...prev,
+      Explore_Courses: prev.Explore_Courses.map((topic, i) => 
+        i === index ? value : topic
+      )
+    }));
+  };
+
+  const handleAddEditTopic = () => {
+    setEditingCourse(prev => ({
+      ...prev,
+      Explore_Courses: [...prev.Explore_Courses, '']
+    }));
+  };
+
+  const handleRemoveEditTopic = (index) => {
+    setEditingCourse(prev => ({
+      ...prev,
+      Explore_Courses: prev.Explore_Courses.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleUpdateCourse = async (courseId) => {
+    if (!editingCourse) return;
+
+    setIsSaving(true);
+    try {
+      const formData = new FormData();
+      formData.append('heading', editingCourse.heading);
+      formData.append('description', editingCourse.description);
+      if (editingCourse.image instanceof File) {
+        formData.append('image', editingCourse.image);
+      }
+      formData.append('Explore_Courses', JSON.stringify(editingCourse.Explore_Courses.filter(topic => topic.trim())));
+
+      await UpdateCourse(courseId, formData);
+      setExpandedCourse(null);
+      setEditingCourse(null);
+      FetchCourses();
+    } catch (error) {
+      console.error('Error updating course:', error);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleSubmit = async () => {
@@ -153,96 +221,154 @@ function AdminCourse() {
       </div>
 
       <div className="space-y-4">
-        {Courses?.map((course, index) => (
-          <div key={index} className="border rounded-lg overflow-hidden">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 bg-gray-50">
-              <div 
-                className="flex items-center gap-4 flex-1 cursor-pointer w-full"
-                onClick={() => setExpandedCourse(expandedCourse === index ? null : index)}
-              >
-                <GraduationCap className="w-5 h-5 text-indigo-600" />
-                <div className="flex-1 font-medium text-gray-700">{course?.heading || 'New Course'}</div>
-                {expandedCourse === index ? (
-                  <ChevronUp className="w-5 h-5 text-gray-400" />
-                ) : (
-                  <ChevronDown className="w-5 h-5 text-gray-400" />
-                )}
-              </div>
-              <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-                <button className="p-2 hover:bg-indigo-50 rounded-md transition-colors">
-                  <Edit2 className="w-5 h-5 text-indigo-600" onClick={()=>setExpandedCourse(index)} />
-                </button>
-                <button className="p-2 hover:bg-red-50 rounded-md transition-colors" onClick={() => handleDelete(course._id)}>
-                  <Trash2 className="w-5 h-5 text-red-500" />
-                </button>
-              </div>
-            </div>
-
-            {expandedCourse === index && (
-              <div className="p-4 space-y-4">
-                <div className="relative group">
-                  {Previews[index] ? (
-                    <img 
-                      src={Previews[index]} 
-                      alt={course?.heading}
-                      className="w-full h-48 object-cover rounded-md"
-                    />
+        {Courses?.map((course, index) => {
+          const isEditing = editingCourse?._id === course._id;
+          return (
+            <div key={index} className="border rounded-lg overflow-hidden">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 bg-gray-50">
+                <div 
+                  className="flex items-center gap-4 flex-1 cursor-pointer w-full"
+                  onClick={() => {
+                    if (!isEditing) {
+                      setExpandedCourse(expandedCourse === index ? null : index);
+                    }
+                  }}
+                >
+                  <GraduationCap className="w-5 h-5 text-indigo-600" />
+                  <div className="flex-1 font-medium text-gray-700">{isEditing ? editingCourse.heading : course?.heading}</div>
+                  {expandedCourse === index ? (
+                    <ChevronUp className="w-5 h-5 text-gray-400" />
                   ) : (
-                    <div className="w-full h-48 bg-gray-100 rounded-md flex items-center justify-center">
-                      <ImageIcon className="w-8 h-8 text-gray-400" />
-                    </div>
+                    <ChevronDown className="w-5 h-5 text-gray-400" />
                   )}
-                  <label className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                    <input type="file" className="hidden" accept="image/*" />
-                    <span className="bg-white text-gray-700 px-4 py-2 rounded-md">Change Image</span>
-                  </label>
                 </div>
+                <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                  <button 
+                    className="p-2 hover:bg-indigo-50 rounded-md transition-colors"
+                    onClick={() => handleEditCourse(course)}
+                  >
+                    <Edit2 className="w-5 h-5 text-indigo-600" />
+                  </button>
+                  <button 
+                    className="p-2 hover:bg-red-50 rounded-md transition-colors" 
+                    onClick={() => handleDelete(course._id)}
+                  >
+                    <Trash2 className="w-5 h-5 text-red-500" />
+                  </button>
+                </div>
+              </div>
 
-                <div className="space-y-4">
-                  <input
-                    type="text"
-                    value={course?.heading}
-                    placeholder="Course Title"
-                    className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 outline-none"
-                  />
-                  
-                  <textarea
-                    value={course?.description}
-                    placeholder="Course Description"
-                    rows={3}
-                    className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 outline-none resize-none"
-                  />
-
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-medium text-gray-700">Explore Courses</h3>
-                      <button className="text-sm text-indigo-600 hover:text-indigo-700">
-                        Add Topic
-                      </button>
-                    </div>
-                    {course?.Explore_Courses?.map((explore, exploreIndex) => (
-                      <div key={exploreIndex} className="flex flex-col sm:flex-row items-start gap-2">
-                        <input
-                          type="text"
-                          value={explore}
-                          className="flex-1 px-3 py-2 border rounded-md focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 outline-none w-full"
-                        />
-                        <div className="flex items-center gap-2 w-full sm:w-auto justify-end mt-2 sm:mt-0">
-                          <button className="p-2 hover:bg-indigo-50 rounded-md transition-colors">
-                            <Edit2 className="w-5 h-5 text-indigo-600" />
-                          </button>
-                          <button className="p-2 hover:bg-red-50 rounded-md transition-colors">
-                            <Trash2 className="w-5 h-5 text-red-500" />
-                          </button>
-                        </div>
+              {expandedCourse === index && (
+                <div className="p-4 space-y-4">
+                  <div 
+                    className="relative group"
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={(e) => handleDrop(e, course._id)}
+                  >
+                    {Previews[index] ? (
+                      <img 
+                        src={Previews[index]} 
+                        alt={course?.heading}
+                        className="w-full h-48 object-cover rounded-md"
+                      />
+                    ) : (
+                      <div className="w-full h-48 bg-gray-100 rounded-md flex items-center justify-center">
+                        <ImageIcon className="w-8 h-8 text-gray-400" />
                       </div>
-                    ))}
+                    )}
+                    <label className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                      <input 
+                        type="file" 
+                        className="hidden" 
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handleEditImageChange(file, course._id);
+                        }}
+                      />
+                      <span className="bg-white text-gray-700 px-4 py-2 rounded-md">Change Image</span>
+                    </label>
+                  </div>
+
+                  <div className="space-y-4">
+                    <input
+                      type="text"
+                      value={isEditing ? editingCourse.heading : course?.heading}
+                      onChange={(e) => isEditing && setEditingCourse(prev => ({ ...prev, heading: e.target.value }))}
+                      placeholder="Course Title"
+                      className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 outline-none"
+                      disabled={!isEditing}
+                    />
+                    
+                    <textarea
+                      value={isEditing ? editingCourse.description : course?.description}
+                      onChange={(e) => isEditing && setEditingCourse(prev => ({ ...prev, description: e.target.value }))}
+                      placeholder="Course Description"
+                      rows={3}
+                      className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 outline-none resize-none"
+                      disabled={!isEditing}
+                    />
+
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-medium text-gray-700">Explore Courses</h3>
+                        {isEditing && (
+                          <button 
+                            onClick={handleAddEditTopic}
+                            className="text-sm text-indigo-600 hover:text-indigo-700"
+                          >
+                            Add Topic
+                          </button>
+                        )}
+                      </div>
+                      {(isEditing ? editingCourse.Explore_Courses : course?.Explore_Courses)?.map((explore, exploreIndex) => (
+                        <div key={exploreIndex} className="flex flex-col sm:flex-row items-start gap-2">
+                          <input
+                            type="text"
+                            value={explore}
+                            onChange={(e) => isEditing && handleEditTopicChange(exploreIndex, e.target.value)}
+                            className="flex-1 px-3 py-2 border rounded-md focus:ring-2 focus:ring-indigo-200 focus:border-indigo-400 outline-none w-full"
+                            disabled={!isEditing}
+                          />
+                          {isEditing && (
+                            <button
+                              onClick={() => handleRemoveEditTopic(exploreIndex)}
+                              className="p-2 hover:bg-red-50 rounded-md transition-colors"
+                            >
+                              <Trash2 className="w-4 h-4 text-red-500" />
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+
+                    {isEditing && (
+                      <div className="flex justify-end gap-2 mt-4">
+                        <button
+                          onClick={() => {
+                            setEditingCourse(null);
+                            setExpandedCourse(null);
+                          }}
+                          className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={() => handleUpdateCourse(course._id)}
+                          disabled={isSaving}
+                          className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md disabled:opacity-50"
+                        >
+                          {isSaving ? 'Saving...' : 'Save Changes'}
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
-            )}
-          </div>
-        ))}
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* Add Course Modal */}

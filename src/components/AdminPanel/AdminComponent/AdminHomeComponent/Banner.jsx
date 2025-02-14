@@ -14,6 +14,7 @@ function AdminBanner() {
   const [file, setFile] = useState();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const[Link, setBannerLink]=useState();
   
 
   async function FetchAdminBanners() {
@@ -146,6 +147,7 @@ function AdminBanner() {
         {Banners?.map((banner, index) => (
           <div key={index} className="group">
             <div className="border rounded-lg overflow-hidden bg-gray-50">
+            {/* <input type="text" vlaue={banner?.link} onChange={(e)=>setBannerLink(e.target.value)} className="px-2 "/> */}
               <div className="relative aspect-video">
                 {previews[index] ? (
                   <img
@@ -158,6 +160,7 @@ function AdminBanner() {
                     <Image className="w-8 h-8 text-gray-400" />
                   </div>
                 )}
+             
                 <div className="absolute inset-0 bg-black/50 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
                   <label className="w-10 h-10 rounded-full bg-white flex items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors">
                     <input
