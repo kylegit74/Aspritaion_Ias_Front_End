@@ -93,7 +93,7 @@ function AdminBanner() {
 
     try {
       await DeleteBanner(id);
-      SetBanners((prev) => prev.filter((banner) => banner._id !== id));
+      FetchAdminBanners()
     } catch (error) {
       console.error("Error deleting banner:", error);
     }

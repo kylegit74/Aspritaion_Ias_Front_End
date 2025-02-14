@@ -62,7 +62,7 @@ function AdminNotice() {
     }
   }
 
- async  function handleDragEnd(result) {
+ async function handleDragEnd(result) {
     if (!result.destination) return;
     const reorderedNotices = Array.from(Notices);
     const [movedItem] = reorderedNotices.splice(result.source.index, 1);
@@ -70,8 +70,7 @@ function AdminNotice() {
     SetNotices(reorderedNotices);
     
     // Update order in the database
-    await UpdateOrder(reorderedNotices.map((notice, index) => ({ id: notice._id, order: index })))
-      .catch(error => console.log("Error updating order", error));
+    await UpdateOrder(reorderedNotices);
   }
 
   useEffect(() => {

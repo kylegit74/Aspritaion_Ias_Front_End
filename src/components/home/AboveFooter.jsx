@@ -73,16 +73,7 @@ const AboveFooter = () => {
                <p className='font-bold text-lg my-3'>M.Sc Calcutta University</p>
 
                <p>
-                Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
-                doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo
-                inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
-                Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
-                sed quia consequuntur magni dolores eos qui ratione voluptatem sequi
-                nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet,
-                consectetur, adipisci velit, sed quia non numquam eius modi tempora
-                incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim
-                ad minima veniam, quis nostrum exercitationem ullam corporis suscipit
-                laboriosam, nisi ut aliquid ex ea commodi consequatur
+               With Aspiration IAS Academy as our foundation, we have built Aspiration JEE & NEET Academy to provide exceptional coaching for students aspiring to clear JEE and NEET. Our experienced faculty, who have guided numerous Civil Services aspirants to success, now bring their expertise to help JEE and NEET students achieve their goals. By combining a rigorous curriculum, personalized attention, and practical exam strategies, we ensure our students are equipped for success. Our online and offline learning modes cater to a diverse range of students, helping them prepare efficiently for these exams.
                </p>
                <div className='flex items-center gap-4 mt-3'>
                  <i className='text-lg font-extralight'>Signature here</i>
@@ -96,13 +87,10 @@ const AboveFooter = () => {
             <div className='max-w-screen-xl mx-auto'>
                 <div className='text-white text-2xl font-medium text-center'>
                     <p>
-                        <TfiQuoteLeft className='inline-block text-3xl mr-1' /> But I must explain to you how all this mistaken idea of denouncing pleasure
-                        and praising pain was born and I will give you a complete account of the
-                        system, and expound the actual teachings of the great explorer of the truth,
-                        the master-builder of human happiness. <TfiQuoteRight className='inline-block text-3xl mr-1' />
+                        <TfiQuoteLeft className='inline-block text-3xl mr-1' /> Success in JEE and NEET is a journey of persistence and hard work. Every challenge faced today will prepare you for the victory tomorrow. Stay focused, remain positive, and keep pushing your limits to achieve your dreams.   <TfiQuoteRight className='inline-block text-3xl mr-1' />
                     </p>
 
-                    <h4 className='mt-4 mb-2'>TEACHER NAME</h4>
+                    <h4 className='mt-4 mb-2'>---- Aspiration JEE & NEET Academy</h4>
                     <p className='text-sm'>CHAIRMAN & CHIEF MENTOR - ASPIRATION ACADEMY GROUP</p>
                 
                 </div>

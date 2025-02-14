@@ -7,11 +7,10 @@ const Eacademy = () => {
     <div className='pb_bg_ylw'>
       <div className='container max-w-7xl px-4 mx-auto py-10 flex items-center justify-between'>
         <div className='w-2/5 z-[10px]'>
-          <h2 className='font-bold text-4xl'>Aspiration <span className='pb_text_red'>eAcademy</span></h2>
-          <p className='my-4'>The next best learning medium after offline Classroom Programs for
-          Students of Class VI to XII Pass is just a click away.</p>
+          <h2 className='font-bold text-4xl'>Aspiration <span className='pb_text_red'>Online Campus </span></h2>
+          <p className='my-4'>Aspiration Digital Campus is an advanced online classroom program, designed to run parallel to offline batches, ensuring seamless, high-quality learning anytime, anywhere. .</p>
 
-          <p className='font-medium mb-4 text-lg'>Join from anywhere & experience <span className='pb_text_red'>Aspiration eAcademy</span> pedagogy.</p>
+          <p className='font-medium mb-4 text-lg'>Join from anywhere & experience <span className='pb_text_red'>Aspiration Online Campus</span> pedagogy.</p>
           <button className='pb_bg_red rounded-full px-4 py-2 flex gap-2 text-white items-center font-medium z-[10px]'>Enroll Now <BiChevronRight className='text-2xl' /> </button>
         </div>
         <div className='w-1/5'>

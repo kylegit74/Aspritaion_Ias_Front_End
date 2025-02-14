@@ -6,6 +6,12 @@ import { Link } from "react-router-dom";
 const Header = () => {
   const [isCoursesOpen, setIsCoursesOpen] = useState(false);
   const [isTargetOpen, setIsTargetOpen] = useState(false);
+   function handleMouseLeave()
+   {
+    setTimeout(() => {
+      setIsCoursesOpen(false);
+    }, 6000);
+   }
 
   return (
     <header className="pb_bg_ylw fixed top-0 left-0 w-full z-50 shadow-md h-16">
@@ -14,8 +20,9 @@ const Header = () => {
         {/* Logo Section this is changed by sanjit */}
         <Link className="relative z-10 min-h-full flex items-center" to={"/"}>
           <div className="bg-red-600 text-white rounded-b-2xl pb-[-40px] px-6 py-4 text-center font-medium h-full flex flex-col justify-center">
-            <span className="block text-xl">ASPIRATION JEE</span>
-            <span className="text-sm">& NEET ACADEMY</span>
+            <span className="block text-xl pt-2">ASPIRATION</span>
+            <span className="text-sm"> JEE  &  NEET </span>
+            <span className="text-sm"> ACADEMY</span>
           </div>
         </Link>
 
@@ -27,7 +34,7 @@ const Header = () => {
           <div
             className="relative"
             onMouseEnter={() => setIsCoursesOpen(true)}
-            onMouseLeave={() => setIsCoursesOpen(false)}
+            onMouseLeave={() => handleMouseLeave()}
           >
             <Link to="/about" className="hover:pb_text_red font-medium">
               Courses <BiCaretDown className="inline-block" />
@@ -40,7 +47,7 @@ const Header = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="absolute left-[-140px] -translate-x-[-140px] top-full z-20 flex bg-white shadow-xl border rounded-lg p-4 min-w-max"
+            className="absolute left-[-140px] -translate-x-[-140px] top-[40px] z-20 flex bg-white shadow-xl border rounded-lg p-4 min-w-max"
           >
             {/* Course Categories */}
                 <div className="w-48 ">
@@ -122,9 +129,9 @@ const Header = () => {
 
         {/* Buttons Section */}
         <div className="flex space-x-4 items-center">
-          <button className="pb_bg_red text-white px-6 font-medium py-2 rounded-full hover:bg-black">
+          {/*<button className="pb_bg_red text-white px-6 font-medium py-2 rounded-full hover:bg-black">
             Register for NEET
-          </button>
+          </button>*/}
           <button className="pb_bg_red text-white px-4 py-2 rounded-full hover:bg-black">
             <BiSearch />
           </button>

@@ -12,6 +12,10 @@ function AdminCourse() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [editingCourse, setEditingCourse] = useState(null);
+  const[EditFile, setEditFile]=useState({});
+  const[EditHeading, setEditHeading]=useState({});
+  const [EditDescription, setEditDescription]=useState({});
+  const[EditTopics, setEditTopics]=useState({})
   const [newCourse, setNewCourse] = useState({
     heading: '',
     description: '',
@@ -25,8 +29,18 @@ function AdminCourse() {
       const res = await FetchAllCourses();
       SetCourses(res);
       let initialPreviews = {};
+      let initialEditFile={};
+      let initialEditHeading={};
+      let initialEditDescription={};
+      let initialEditTopics={};
       res.forEach((course, index) => {
         initialPreviews[index] = course.image;
+        initialEditFile[index]=course.image;
+        initialEditHeading[index]=course.heading;
+        initialEditDescription[index]=course.description;
+        course.Explore_Courses?.map((course)=>{
+          initialEditTopics[index]=course;
+        })
       });
       SetPreviews(initialPreviews);
     } catch (error) {
@@ -74,11 +88,10 @@ function AdminCourse() {
     }
   };
 
-  const handleEditImageChange = async (file, courseId) => {
+  const handleEditImageChange = async (e) => {
     try {
-      const formData = new FormData();
-      formData.append('image', file);
-      await UpdateCourse(courseId, formData);
+   console.log('e',e.target.value)
+   
       FetchCourses();
     } catch (error) {
       console.error('Error updating course image:', error);
@@ -150,10 +163,12 @@ function AdminCourse() {
       if (editingCourse.image instanceof File) {
         formData.append('image', editingCourse.image);
       }
+      console.log('heading',editingCourse.heading)
+      console.log('des',editingCourse.description)
       formData.append('Explore_Courses', JSON.stringify(editingCourse.Explore_Courses.filter(topic => topic.trim())));
 
       await UpdateCourse(courseId, formData);
-      setExpandedCourse(null);
+      setExpandedCourse(false);
       setEditingCourse(null);
       FetchCourses();
     } catch (error) {
@@ -283,8 +298,7 @@ function AdminCourse() {
                         className="hidden" 
                         accept="image/*"
                         onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) handleEditImageChange(file, course._id);
+                          handleEditImageChange(e);
                         }}
                       />
                       <span className="bg-white text-gray-700 px-4 py-2 rounded-md">Change Image</span>

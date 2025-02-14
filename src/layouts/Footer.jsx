@@ -18,11 +18,7 @@ const Footer = () => {
               <span className='text-xl block'>Academy</span>
             </Link>
 
-            <p className='text-sm my-5'>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-            enim ad minim veniam, quis nostrud exercitation ullamco laboris
-            nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla</p>
+            <p className='text-sm my-5'> Aspiration JEE & NEET Academy is a premier coaching institute dedicated to empowering students with top-notch guidance, expert faculty, and result-driven strategies. Our meticulously designed programs, available both online and offline, ensure comprehensive preparation for JEE and NEET, helping aspirants achieve their dreams with excellence and confidence.</p>
 
             <h5 className='mb-5'>Follow us on:</h5>
             <div className="flex gap-5 text-4xl items-center">
