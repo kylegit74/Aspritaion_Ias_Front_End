@@ -12,9 +12,10 @@ function AdminCourse() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [editingCourse, setEditingCourse] = useState(null);
-  const[EditFile, setEditFile]=useState({});
+  const[EditFile, setEditFile]=useState();
   const[EditHeading, setEditHeading]=useState({});
   const [EditDescription, setEditDescription]=useState({});
+ 
   const[EditTopics, setEditTopics]=useState({})
   const [newCourse, setNewCourse] = useState({
     heading: '',
@@ -87,16 +88,15 @@ function AdminCourse() {
       setNewCourse(prev => ({ ...prev, image: file }));
     }
   };
-
-  const handleEditImageChange = async (e) => {
-    try {
-   console.log('e',e.target.value)
-   
-      FetchCourses();
-    } catch (error) {
-      console.error('Error updating course image:', error);
+  const handleEditImageChange = (e, index) => {
+    const file = e.target.files[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setEditFile(file); // Store the new file
+      SetPreviews(prev => ({ ...prev, [index]: url })); // Update preview immediately
     }
   };
+  
 
   const handleAddTopic = () => {
     setNewCourse(prev => ({
@@ -160,10 +160,11 @@ function AdminCourse() {
       const formData = new FormData();
       formData.append('heading', editingCourse.heading);
       formData.append('description', editingCourse.description);
-      if (editingCourse.image instanceof File) {
-        formData.append('image', editingCourse.image);
-      }
+      
+        formData.append('image', EditFile? EditFile : editingCourse.image);
+      
       console.log('heading',editingCourse.heading)
+      console.log('editfile',EditFile? EditFile :editingCourse.image)
       console.log('des',editingCourse.description)
       formData.append('Explore_Courses', JSON.stringify(editingCourse.Explore_Courses.filter(topic => topic.trim())));
 
@@ -217,6 +218,13 @@ function AdminCourse() {
       setIsSaving(false);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      Object.values(Previews).forEach(url => URL.revokeObjectURL(url));
+    };
+  }, [Previews]);
+  
 
   useEffect(() => {
     FetchCourses();
@@ -298,7 +306,7 @@ function AdminCourse() {
                         className="hidden" 
                         accept="image/*"
                         onChange={(e) => {
-                          handleEditImageChange(e);
+                          handleEditImageChange(e, index);
                         }}
                       />
                       <span className="bg-white text-gray-700 px-4 py-2 rounded-md">Change Image</span>
